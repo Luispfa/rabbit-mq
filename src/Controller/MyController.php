@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use Symfony\Component\Messenger\MessageBusInterface;
 use App\Message\MyMessage;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Messenger\MessageBusInterface;
 
-class MyController
+class MyController extends AbstractController
 {
-    public function sendMessage(MessageBusInterface $bus)
+    #[Route('/send-message', name: 'send_message')]
+    public function sendMessage(MessageBusInterface $bus): JsonResponse
     {
-        $bus->dispatch(new MyMessage('Hola, RabbitMQ!'));
+        $message = new MyMessage('Hello RabbitMQ');
+        $bus->dispatch($message);
 
-        return new Response('Mensaje enviado a RabbitMQ.');
+        return new JsonResponse(['message' => 'Message sent successfully!']);
     }
 }
